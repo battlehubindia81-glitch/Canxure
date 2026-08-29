@@ -1,0 +1,16 @@
+.env
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.ipynb_checkpoints/
+data/raw/*
+!data/raw/.gitkeep
+models/**/checkpoints/*.pt
+outputs/**/*.png
+outputs/**/*.csv
+outputs/**/*.json
+outputs/**/*.md
+outputs/**/*.txt

@@ -1,0 +1,7 @@
+propagation_depth: 3
+decay_factor: 0.65
+convergence_threshold: 0.0001
+pathways:
+  MAPK: [EGFR, RAS, RAF, MEK, ERK]
+  PI3K_AKT: [PIK3CA, PI3K, AKT, MTOR]
+  DDR: [TP53, BRCA1, BRCA2, ATM]

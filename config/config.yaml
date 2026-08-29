@@ -1,0 +1,7 @@
+random_seed: 42
+research_use_only: true
+artifact_root: outputs
+external_api:
+  timeout_seconds: 10
+  retries: 2
+  cache_dir: data/external/cache

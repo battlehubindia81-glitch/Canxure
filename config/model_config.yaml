@@ -1,0 +1,18 @@
+models:
+  lite:
+    expression_dim: 500
+    mutation_dim: 64
+    biology_dim: 64
+    drug_dim: 1024
+  research:
+    expression_dim: 500
+    mutation_input_dim: 64
+    biology_input_dim: 64
+    drug_input_dim: 1024
+    tumor_hidden: 1024
+    tumor_embedding: 512
+    mutation_embedding: 256
+    biology_embedding: 256
+    drug_embedding: 256
+    fusion_hidden: 768
+    fusion_embedding: 512
