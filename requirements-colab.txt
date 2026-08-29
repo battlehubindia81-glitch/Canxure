@@ -1,0 +1,5 @@
+-r requirements.txt
+torch
+deepchem
+rdkit
+# Install torch-geometric using the wheel matching your Colab Torch/CUDA runtime.

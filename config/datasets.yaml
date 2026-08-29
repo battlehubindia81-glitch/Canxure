@@ -1,0 +1,4 @@
+demo:
+  dataset_version: synthetic-v001
+  target: pIC50
+  warning: SYNTHETIC DATA - DEMONSTRATION ONLY - NOT CLINICAL EVIDENCE

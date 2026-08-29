@@ -1,0 +1,3 @@
+demo_library:
+  source: curated demonstration SMILES for software testing only
+  clinical_evidence: DATA_UNAVAILABLE
