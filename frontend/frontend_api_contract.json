@@ -1,0 +1,63 @@
+{
+  "service": "Canxure Real-Data API",
+  "base_url": {
+    "development": "http://127.0.0.1:8000",
+    "production": "${CANXURE_API_URL}"
+  },
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "/health"
+    },
+    "samples": {
+      "method": "GET",
+      "path": "/samples"
+    },
+    "drugs": {
+      "method": "GET",
+      "path": "/drugs"
+    },
+    "single_prediction": {
+      "method": "GET",
+      "path": "/predict",
+      "query": [
+        "sample_id",
+        "drug_id"
+      ]
+    },
+    "multi_prediction": {
+      "method": "POST",
+      "path": "/predict"
+    }
+  },
+  "prediction_fields": [
+    "sample_id",
+    "drug_id",
+    "predicted_log2_auc",
+    "toxicity",
+    "resistance",
+    "clinical_response_logit_0",
+    "clinical_response_logit_1",
+    "checkpoint_epoch"
+  ],
+  "model": {
+    "name": "ResearchDigitalTwin",
+    "checkpoint": "epoch_015.pt",
+    "epoch": 15,
+    "parameters": 3671685
+  },
+  "real_data": {
+    "sample_count": 696,
+    "drug_count": 421,
+    "expression_dim": 500,
+    "mutation_dim": 64,
+    "biology_dim": 64,
+    "drug_dim": 1024
+  },
+  "interpretation": {
+    "predicted_log2_auc": "Primary trained real-data response output.",
+    "toxicity": "Model toxicity-head output; not established here as a clinically validated toxicity prediction.",
+    "resistance": "Model resistance-head output; not established here as a clinically validated resistance prediction.",
+    "clinical_response_logits": "Raw model logits; not clinical probabilities or treatment recommendations."
+  }
+}
