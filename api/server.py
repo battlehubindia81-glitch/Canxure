@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
@@ -15,13 +16,23 @@ if str(PROJECT_ROOT) not in sys.path:
 from api.real_data_api import create_api
 
 
-BASE_DIR = "/content/drive/MyDrive/Canxure_backup"
-PROJECT_DIR = "/content/Canxure"
+PROJECT_DIR = os.environ.get(
+    "CANXURE_PROJECT_DIR",
+    str(PROJECT_ROOT),
+)
+BASE_DIR = os.environ.get(
+    "CANXURE_BASE_DIR",
+    str(PROJECT_ROOT / "deployment" / "artifacts"),
+)
+CHECKPOINT_NAME = os.environ.get(
+    "CANXURE_CHECKPOINT",
+    "epoch_015.pt",
+)
 
 SERVICE = create_api(
     base_dir=BASE_DIR,
     project_dir=PROJECT_DIR,
-    checkpoint_name="epoch_015.pt",
+    checkpoint_name=CHECKPOINT_NAME,
 )
 
 
@@ -187,16 +198,25 @@ class CanxureAPIHandler(BaseHTTPRequestHandler):
             )
 
 
-def create_server(host="127.0.0.1", port=8000):
+def create_server(
+    host: str | None = None,
+    port: int | None = None,
+):
+    resolved_host = host or os.environ.get("HOST", "0.0.0.0")
+    resolved_port = int(
+        port if port is not None else os.environ.get("PORT", "8000")
+    )
+
     return ThreadingHTTPServer(
-        (host, port),
+        (resolved_host, resolved_port),
         CanxureAPIHandler,
     )
 
 if __name__ == "__main__":
     server = create_server()
     print(
-        "Canxure API server starting on http://127.0.0.1:8000",
+        f"Canxure API server listening on "
+        f"{server.server_address[0]}:{server.server_address[1]}",
         flush=True,
     )
     try:
