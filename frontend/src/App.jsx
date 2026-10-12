@@ -74,9 +74,7 @@ export default function App() {
     }
 
     return drugs
-      .filter((id) =>
-        String(id).toLowerCase().includes(query)
-      )
+      .filter((id) => String(id).toLowerCase().includes(query))
       .slice(0, 40);
   }, [drugs, drugSearch]);
 
@@ -111,7 +109,7 @@ export default function App() {
     event.preventDefault();
 
     if (!sampleId || !drugId) {
-      setError("Please select a sample and a drug.");
+      setError("Please select a cell line and a drug.");
       return;
     }
 
@@ -121,13 +119,10 @@ export default function App() {
       setPrediction(null);
 
       const result = await predictPair(sampleId, drugId);
-
       setPrediction(result);
     } catch (err) {
       setPrediction(null);
-      setError(
-        err?.message || "Prediction request failed."
-      );
+      setError(err?.message || "Prediction request failed.");
     } finally {
       setPredicting(false);
     }
@@ -152,11 +147,7 @@ export default function App() {
       setPrediction(null);
       setMultiPredictions([]);
 
-      const result = await predictDrugs(
-        sampleId,
-        selectedDrugIds
-      );
-
+      const result = await predictDrugs(sampleId, selectedDrugIds);
       setMultiPredictions(result?.results ?? []);
     } catch (err) {
       setMultiPredictions([]);
@@ -168,286 +159,199 @@ export default function App() {
     }
   }
 
-  return (
-    <main className="app-shell">
-      <header className="hero">
-        <div>
-          <p className="eyebrow">CANXURE</p>
-
-          <h1>Precision Oncology Digital Twin</h1>
-
-          <p className="subtitle">
-            Real-data simulation interface powered by ResearchDigitalTwin.
-          </p>
+  function renderMetrics(result) {
+    return (
+      <div className="result-grid">
+        <div className="metric-card">
+          <span>Toxicity</span>
+          <strong>{Number(result.toxicity).toFixed(4)}</strong>
         </div>
 
-        <div
-          className={`status-pill ${
-            health?.status === "ok" ? "ok" : ""
-          }`}
-        >
-          {loading
-            ? "Connecting..."
-            : health?.status === "ok"
-              ? "API Online"
-              : "API Offline"}
-        </div>
-      </header>
-
-      <section className="stats-grid">
-        <div className="stat-card">
-          <span>Model</span>
-          <strong>{health?.model ?? "—"}</strong>
+        <div className="metric-card">
+          <span>Resistance</span>
+          <strong>{Number(result.resistance).toFixed(4)}</strong>
         </div>
 
-        <div className="stat-card">
-          <span>Checkpoint</span>
-          <strong>{health?.checkpoint ?? "—"}</strong>
-        </div>
-
-        <div className="stat-card">
-          <span>Real Samples</span>
+        <div className="metric-card">
+          <span>Clinical logit 0</span>
           <strong>
-            {health?.sample_count ?? samples.length}
+            {Number(result.clinical_response_logit_0).toFixed(4)}
           </strong>
         </div>
 
-        <div className="stat-card">
-          <span>Validated Drugs</span>
+        <div className="metric-card">
+          <span>Clinical logit 1</span>
           <strong>
-            {health?.drug_count ?? drugs.length}
+            {Number(result.clinical_response_logit_1).toFixed(4)}
           </strong>
         </div>
-      </section>
+      </div>
+    );
+  }
 
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <p className="section-label">
-              REAL-DATA PREDICTION
-            </p>
+  function renderPrediction(result) {
+    return (
+      <>
+        <div className="result-header">
+          <div className="result-identity">
+            <span className="result-label">PREDICTION</span>
+            <h3>{result.drug_id}</h3>
+            <p>{result.sample_id}</p>
+          </div>
 
-            <h2>
-              {mode === "single"
-                ? "Single Cell-Line / Drug Simulation"
-                : "Single Cell-Line / Multi-Drug Simulation"}
-            </h2>
+          <div className="efficacy-value">
+            <span>Predicted log2 AUC</span>
+            <strong>
+              {Number(result.predicted_log2_auc).toFixed(4)}
+            </strong>
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px",
-            flexWrap: "wrap",
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => switchMode("single")}
-            disabled={loading || predicting}
-            style={{
-              padding: "10px 16px",
-              borderRadius: "10px",
-              border: "1px solid rgba(255,255,255,0.15)",
-              cursor: "pointer",
-              fontWeight: 600,
-              opacity: mode === "single" ? 1 : 0.65,
-            }}
-          >
-            Single Drug
-          </button>
+        {renderMetrics(result)}
+      </>
+    );
+  }
 
-          <button
-            type="button"
-            onClick={() => switchMode("multi")}
-            disabled={loading || predicting}
-            style={{
-              padding: "10px 16px",
-              borderRadius: "10px",
-              border: "1px solid rgba(255,255,255,0.15)",
-              cursor: "pointer",
-              fontWeight: 600,
-              opacity: mode === "multi" ? 1 : 0.65,
-            }}
-          >
-            Multiple Drugs
-          </button>
+  return (
+    <main className="app-shell">
+      <header className="hero">
+        <div className="brand-lockup">
+          <h1 className="brand-title">CANXURE</h1>
+          <p className="subtitle">Precision Oncology Digital Twin</p>
+          <p className="hero-description">
+            Real-data research interface powered by ResearchDigitalTwin.
+          </p>
+        </div>
+      </header>
+
+      <div className="mode-switch" role="group" aria-label="Prediction mode">
+        <button
+          type="button"
+          className={`mode-button ${mode === "single" ? "active" : ""}`}
+          onClick={() => switchMode("single")}
+          disabled={loading || predicting}
+          aria-pressed={mode === "single"}
+        >
+          Single Drug
+        </button>
+
+        <button
+          type="button"
+          className={`mode-button ${mode === "multi" ? "active" : ""}`}
+          onClick={() => switchMode("multi")}
+          disabled={loading || predicting}
+          aria-pressed={mode === "multi"}
+        >
+          Multiple Drugs
+        </button>
+      </div>
+
+      <section className="panel" aria-labelledby="prediction-heading">
+        <div className="panel-heading">
+          <p className="section-label">REAL-DATA PREDICTION</p>
+          <h2 id="prediction-heading">
+            {mode === "single"
+              ? "Single Cell-Line / Drug Simulation"
+              : "Single Cell-Line / Multi-Drug Simulation"}
+          </h2>
         </div>
 
         {mode === "single" ? (
-          <form
-            onSubmit={handlePrediction}
-            className="prediction-form"
-          >
-            <label>
-              <span>Cell line</span>
-
+          <form onSubmit={handlePrediction} className="prediction-form">
+            <label className="form-field">
+              <span>Select Cell Line</span>
               <select
                 value={sampleId}
-                onChange={(e) =>
-                  setSampleId(e.target.value)
-                }
-                disabled={
-                  loading || !samples.length
-                }
+                onChange={(event) => setSampleId(event.target.value)}
+                disabled={loading || !samples.length}
               >
                 {samples.map((id) => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
+                  <option key={id} value={id}>{id}</option>
                 ))}
               </select>
             </label>
 
-            <label>
-              <span>Drug</span>
-
+            <label className="form-field">
+              <span>Select Drug</span>
               <select
                 value={drugId}
-                onChange={(e) =>
-                  setDrugId(e.target.value)
-                }
-                disabled={
-                  loading || !drugs.length
-                }
+                onChange={(event) => setDrugId(event.target.value)}
+                disabled={loading || !drugs.length}
               >
                 {drugs.map((id) => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
+                  <option key={id} value={id}>{id}</option>
                 ))}
               </select>
             </label>
 
             <button
               type="submit"
-              disabled={predicting || loading}
+              className="primary-button"
+              disabled={predicting || loading || !samples.length || !drugs.length}
             >
-              {predicting
-                ? "Running..."
-                : "Run Prediction"}
+              {predicting ? "Running..." : "Run Prediction"}
             </button>
           </form>
         ) : (
-          <form
-            onSubmit={handleMultiPrediction}
-          >
-            <label>
-              <span>Cell line</span>
-
+          <form onSubmit={handleMultiPrediction} className="multi-form">
+            <label className="form-field">
+              <span>Select Cell Line</span>
               <select
                 value={sampleId}
-                onChange={(e) =>
-                  setSampleId(e.target.value)
-                }
-                disabled={
-                  loading || !samples.length
-                }
+                onChange={(event) => setSampleId(event.target.value)}
+                disabled={loading || !samples.length}
               >
                 {samples.map((id) => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
+                  <option key={id} value={id}>{id}</option>
                 ))}
               </select>
             </label>
 
-            <div style={{ marginTop: "18px" }}>
-              <label>
-                <span>Search validated drugs</span>
+            <label className="form-field search-field">
+              <span>Search Validated Drugs</span>
+              <input
+                type="text"
+                value={drugSearch}
+                onChange={(event) => setDrugSearch(event.target.value)}
+                placeholder="Search by drug name..."
+                disabled={loading || !drugs.length}
+              />
+            </label>
 
-                <input
-                  type="text"
-                  value={drugSearch}
-                  onChange={(e) =>
-                    setDrugSearch(e.target.value)
-                  }
-                  placeholder="Search by drug name..."
-                  disabled={
-                    loading || !drugs.length
-                  }
-                  style={{
-                    width: "100%",
-                    boxSizing: "border-box",
-                  }}
-                />
-              </label>
-            </div>
-
-            <div
-              style={{
-                marginTop: "12px",
-                maxHeight: "250px",
-                overflowY: "auto",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: "12px",
-                padding: "8px",
-              }}
-            >
+            <div className="drug-picker" aria-label="Available drugs">
               {filteredDrugs.map((drug) => (
-                <label
-                  key={drug}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "9px 8px",
-                    cursor: "pointer",
-                  }}
-                >
+                <label key={drug} className="drug-option">
                   <input
                     type="checkbox"
                     checked={selectedDrugIds.includes(drug)}
-                    onChange={() =>
-                      toggleDrug(drug)
-                    }
+                    onChange={() => toggleDrug(drug)}
+                    disabled={loading || predicting}
                   />
-
                   <span>{drug}</span>
                 </label>
               ))}
 
               {!filteredDrugs.length && (
-                <div style={{ padding: "12px" }}>
-                  No matching drugs found.
-                </div>
+                <p className="empty-search">No matching drugs found.</p>
               )}
             </div>
 
-            <div style={{ marginTop: "14px" }}>
-              <strong>
-                Selected drugs: {selectedDrugIds.length}
-              </strong>
+            <div className="selected-summary">
+              <strong>Selected drugs: {selectedDrugIds.length}</strong>
             </div>
 
             {selectedDrugIds.length > 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                  marginTop: "12px",
-                }}
-              >
+              <div className="selected-drugs">
                 {selectedDrugIds.map((drug) => (
                   <button
                     key={drug}
                     type="button"
-                    onClick={() =>
-                      removeSelectedDrug(drug)
-                    }
+                    className="selected-drug-chip"
+                    onClick={() => removeSelectedDrug(drug)}
                     disabled={predicting}
-                    style={{
-                      padding: "7px 10px",
-                      borderRadius: "999px",
-                      border:
-                        "1px solid rgba(255,255,255,0.18)",
-                      cursor: "pointer",
-                    }}
+                    aria-label={`Remove ${drug}`}
                   >
-                    {drug} ×
+                    {drug} <span aria-hidden="true">×</span>
                   </button>
                 ))}
               </div>
@@ -455,14 +359,8 @@ export default function App() {
 
             <button
               type="submit"
-              disabled={
-                predicting ||
-                loading ||
-                !selectedDrugIds.length
-              }
-              style={{
-                marginTop: "18px",
-              }}
+              className="primary-button multi-submit"
+              disabled={predicting || loading || !selectedDrugIds.length}
             >
               {predicting
                 ? "Running..."
@@ -476,198 +374,103 @@ export default function App() {
         )}
 
         {error && (
-          <div className="error-box">
+          <div className="error-box" role="alert">
             {error}
           </div>
         )}
 
+        <aside className="research-disclaimer">
+          <h3>Please Read Carefully</h3>
+          <p>
+            This model is intended strictly for research purposes and was
+            trained using data from the Genomics of Drug Sensitivity in
+            Cancer (GDSC) database. It has not undergone clinical validation
+            and is not approved for clinical use or treatment decisions.
+          </p>
+        </aside>
+
         {prediction && mode === "single" && (
           <div className="result-card">
-            <div className="result-header">
-              <div>
-                <span className="result-label">
-                  PREDICTION
-                </span>
-
-                <h3>{prediction.drug_id}</h3>
-
-                <p>{prediction.sample_id}</p>
-              </div>
-
-              <div className="efficacy-value">
-                <span>Predicted log2 AUC</span>
-
-                <strong>
-                  {Number(
-                    prediction.predicted_log2_auc
-                  ).toFixed(4)}
-                </strong>
-              </div>
-            </div>
-
-            <div className="result-grid">
-              <div>
-                <span>Toxicity</span>
-                <strong>
-                  {Number(
-                    prediction.toxicity
-                  ).toFixed(4)}
-                </strong>
-              </div>
-
-              <div>
-                <span>Resistance</span>
-                <strong>
-                  {Number(
-                    prediction.resistance
-                  ).toFixed(4)}
-                </strong>
-              </div>
-
-              <div>
-                <span>Clinical logit 0</span>
-                <strong>
-                  {Number(
-                    prediction.clinical_response_logit_0
-                  ).toFixed(4)}
-                </strong>
-              </div>
-
-              <div>
-                <span>Clinical logit 1</span>
-                <strong>
-                  {Number(
-                    prediction.clinical_response_logit_1
-                  ).toFixed(4)}
-                </strong>
-              </div>
-            </div>
-
+            {renderPrediction(prediction)}
             <p className="model-note">
-              Model outputs are shown as returned by the
-              Epoch-15 ResearchDigitalTwin. Toxicity,
-              resistance, and clinical response logits are
-              not presented here as clinically validated
-              predictions or treatment recommendations.
+              Outputs are shown as returned by the Epoch-15 ResearchDigitalTwin.
+              Toxicity, resistance, and clinical-response logits are not
+              clinically validated predictions or treatment recommendations.
             </p>
           </div>
         )}
 
-        {mode === "multi" &&
-          multiPredictions.length > 0 && (
-            <div style={{ marginTop: "24px" }}>
-              <div className="result-card">
-                <div className="result-header">
-                  <div>
-                    <span className="result-label">
-                      MULTI-DRUG PREDICTION
-                    </span>
-
-                    <h3>{sampleId}</h3>
-
-                    <p>
-                      {multiPredictions.length} drugs evaluated
-                    </p>
-                  </div>
-                </div>
-
-                {multiPredictions.map((result) => (
-                  <div
-                    key={result.drug_id}
-                    style={{
-                      borderTop:
-                        "1px solid rgba(255,255,255,0.10)",
-                      paddingTop: "18px",
-                      marginTop: "18px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: "20px",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <div>
-                        <span className="result-label">
-                          DRUG
-                        </span>
-
-                        <h3>{result.drug_id}</h3>
-                      </div>
-
-                      <div className="efficacy-value">
-                        <span>
-                          Predicted log2 AUC
-                        </span>
-
-                        <strong>
-                          {Number(
-                            result.predicted_log2_auc
-                          ).toFixed(4)}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <div className="result-grid">
-                      <div>
-                        <span>Toxicity</span>
-
-                        <strong>
-                          {Number(
-                            result.toxicity
-                          ).toFixed(4)}
-                        </strong>
-                      </div>
-
-                      <div>
-                        <span>Resistance</span>
-
-                        <strong>
-                          {Number(
-                            result.resistance
-                          ).toFixed(4)}
-                        </strong>
-                      </div>
-
-                      <div>
-                        <span>Clinical logit 0</span>
-
-                        <strong>
-                          {Number(
-                            result.clinical_response_logit_0
-                          ).toFixed(4)}
-                        </strong>
-                      </div>
-
-                      <div>
-                        <span>Clinical logit 1</span>
-
-                        <strong>
-                          {Number(
-                            result.clinical_response_logit_1
-                          ).toFixed(4)}
-                        </strong>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <p className="model-note">
-                  These values are raw model outputs from
-                  the Epoch-15 ResearchDigitalTwin and are
-                  not presented as clinically validated
-                  treatment recommendations.
-                </p>
-              </div>
+        {mode === "multi" && multiPredictions.length > 0 && (
+          <div className="result-card multi-results">
+            <div className="multi-result-heading">
+              <span className="result-label">MULTI-DRUG PREDICTION</span>
+              <h3>{sampleId}</h3>
+              <p>{multiPredictions.length} drugs evaluated</p>
             </div>
-          )}
+
+            {multiPredictions.map((result) => (
+              <article key={result.drug_id} className="multi-result-item">
+                {renderPrediction(result)}
+              </article>
+            ))}
+
+            <p className="model-note">
+              These outputs are generated by the Epoch-15 ResearchDigitalTwin.
+              They are not clinically validated treatment recommendations.
+            </p>
+          </div>
+        )}
       </section>
 
-      <footer>
-        Canxure · Research interface · Epoch-15 ResearchDigitalTwin
+      <div className="api-status-area">
+        <div
+          className={`status-pill ${
+            health?.status === "ok" ? "ok" : "offline"
+          }`}
+          aria-live="polite"
+        >
+          <span className="status-dot" aria-hidden="true" />
+          {loading
+            ? "Connecting to API..."
+            : health?.status === "ok"
+              ? "API Online"
+              : "API Offline"}
+        </div>
+      </div>
+
+      <footer className="site-footer">
+        <div className="footer-brand">
+          <strong>CANXURE</strong>
+          <span>Control developed</span>
+
+          <div className="footer-socials" aria-label="Social media">
+            <span className="social-mark instagram-mark" role="img" aria-label="Instagram">
+              ◎
+            </span>
+            <span className="social-mark x-mark" role="img" aria-label="X">
+              𝕏
+            </span>
+            <span className="social-mark linkedin-mark" role="img" aria-label="LinkedIn">
+              in
+            </span>
+          </div>
+        </div>
+
+        <div className="footer-data">
+          <span className="footer-data-label">Data Used:</span>
+          <a
+            href="https://depmap.org/portal/data_page/?tab=allData"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            deepmap.org
+          </a>
+        </div>
       </footer>
+
+      <p className="page-note">
+        CANXURE · Research interface · Not validated for clinical use
+      </p>
     </main>
   );
 }
