@@ -218,9 +218,6 @@ export default function App() {
         <div className="brand-lockup">
           <h1 className="brand-title">CANXURE</h1>
           <p className="subtitle">Precision Oncology Digital Twin</p>
-          <p className="hero-description">
-            Real-data research interface powered by ResearchDigitalTwin.
-          </p>
         </div>
       </header>
 
@@ -422,37 +419,68 @@ export default function App() {
         )}
       </section>
 
-      <div className="api-status-area">
-        <div
-          className={`status-pill ${
-            health?.status === "ok" ? "ok" : "offline"
-          }`}
-          aria-live="polite"
-        >
-          <span className="status-dot" aria-hidden="true" />
-          {loading
-            ? "Connecting to API..."
-            : health?.status === "ok"
-              ? "API Online"
-              : "API Offline"}
+      {health?.status !== "ok" && (
+        <div className="api-status-area">
+          <div
+            className={`status-message ${
+              loading ? "connecting" : "offline"
+            }`}
+            aria-live="polite"
+          >
+            {loading ? "Connecting to API..." : "API Offline"}
+          </div>
         </div>
-      </div>
+      )}
 
       <footer className="site-footer">
         <div className="footer-brand">
           <strong>CANXURE</strong>
-          <span>Control developed</span>
+          <span>Contact Developer</span>
 
           <div className="footer-socials" aria-label="Social media">
-            <span className="social-mark instagram-mark" role="img" aria-label="Instagram">
-              ◎
-            </span>
-            <span className="social-mark x-mark" role="img" aria-label="X">
-              𝕏
-            </span>
-            <span className="social-mark linkedin-mark" role="img" aria-label="LinkedIn">
-              in
-            </span>
+            <a
+              className="social-link instagram-link"
+              href="https://instagram.com/inikki_o?srtk=MXkwMjFyaGhhYmMxMA%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              title="Instagram"
+            >
+              <svg
+                className="social-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a
+              className="social-link x-link"
+              href="https://x.com/Nitin1155220831"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X"
+              title="X"
+            >
+              <svg
+                className="social-icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M18.901 1.153h3.68l-8.04 9.185
+                  9.456 12.493h-7.406l-5.8-7.584-6.63 7.584H.478l8.6-9.83L0
+                  1.153h7.594l5.243 6.932zm-1.291 19.477h2.039L6.886
+                  3.238H4.698z" />
+              </svg>
+            </a>
           </div>
         </div>
 

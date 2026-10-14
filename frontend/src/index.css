@@ -767,3 +767,192 @@ button:disabled {
     animation-duration: 0.01ms !important;
   }
 }
+
+
+/* CANXURE CELL 182 APPROVED FRONTEND REFINEMENTS */
+
+/* 1. Highlight the main CANXURE heading. */
+.brand-title {
+  color: #C93E86 !important;
+}
+
+/* 2. Slightly round card/panel edges and both selectors. */
+main [class*="card"],
+main [class*="panel"],
+main .simulation-form {
+  border-radius: 26px !important;
+}
+
+select,
+.field-select,
+.select-control {
+  border-radius: 16px !important;
+}
+
+/* 3. The disclaimer is plain centered text, not a separate card. */
+main aside,
+.disclaimer,
+.research-disclaimer {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-align: center !important;
+  padding: 12px 0 !important;
+  margin-inline: auto !important;
+}
+
+main aside h3,
+main aside p,
+.disclaimer h3,
+.disclaimer p,
+.research-disclaimer h3,
+.research-disclaimer p {
+  text-align: center !important;
+}
+
+/* 4. API status is plain text with no pill/card or dot. */
+.api-status,
+.api-indicator,
+[class*="api-status"],
+[class*="api-indicator"] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.api-status .status-dot,
+.api-indicator .status-dot,
+.api-status .status-indicator,
+.api-indicator .status-indicator,
+[class*="status-dot"] {
+  display: none !important;
+}
+
+/* Hide the status entirely when the API is online. */
+.api-status.online,
+.api-status.api-online,
+.api-status.status-online,
+.api-indicator.online,
+.api-indicator.api-online,
+[class*="api-status"][class*="online"],
+[class*="api-indicator"][class*="online"],
+[class*="api"][class*="online"],
+[class*="status"][class*="online"] {
+  display: none !important;
+}
+
+/* Shine and italicize a connecting/checking status, if present. */
+@keyframes canxure-status-shine {
+  0%, 100% {
+    opacity: 0.62;
+    filter: drop-shadow(0 0 0 rgba(201, 62, 134, 0));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(201, 62, 134, 0.72));
+  }
+}
+
+.api-status.connecting,
+.api-status.checking,
+.api-indicator.connecting,
+.api-indicator.checking,
+[class*="api"][class*="connect"],
+[class*="status"][class*="connect"],
+[class*="api"][class*="check"],
+[class*="status"][class*="check"] {
+  font-style: italic !important;
+  animation: canxure-status-shine 1.8s ease-in-out infinite;
+}
+
+/* 5. Full-bleed footer with horizontal borders only. */
+.site-footer {
+  width: 100vw !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  background: #5C1140 !important;
+}
+
+/* Real linked social icons in the footer. */
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-socials .social-link {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  border: 1px solid rgba(242, 242, 245, 0.48);
+  border-radius: 12px;
+  color: #F2F2F5;
+  background: rgba(14, 14, 16, 0.18);
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.footer-socials .social-link:hover {
+  background: rgba(242, 242, 245, 0.12);
+  border-color: #F2F2F5;
+  transform: translateY(-2px);
+}
+
+.footer-socials .social-link:focus-visible {
+  outline: 2px solid #F2F2F5;
+  outline-offset: 3px;
+}
+
+.footer-socials .social-icon {
+  display: block;
+  width: 21px;
+  height: 21px;
+  flex: none;
+}
+
+
+/* CELL 185 — API STATUS BEHAVIOUR FIX */
+
+/* The status area is plain text, not a card or pill. */
+.api-status-area {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.status-message {
+  display: inline-block;
+  min-height: 0 !important;
+  padding: 0 !important;
+  color: var(--coal-soft);
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-message.connecting {
+  color: var(--coal-soft);
+  font-style: italic !important;
+  animation: canxure-status-shine 1.8s ease-in-out infinite;
+}
+
+.status-message.offline {
+  font-style: normal;
+  animation: none;
+}
