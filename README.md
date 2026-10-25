@@ -5,14 +5,8 @@
 > clinical treatment recommendations. They must not be used to select,
 > withhold, dose, or modify treatment for any patient.
 
-```{=html}
-<p align="center">
-```
-`<strong>`{=html}Multimodal machine learning for exploring cancer-cell
-and drug-response relationships`</strong>`{=html}
-```{=html}
-</p>
-```
+**Multimodal machine learning for exploring cancer-cell and drug-response relationships**
+
 CANXURE (also referred to as **CANXURE AI**) is a research project
 exploring how cancer-cell molecular profiles and drug representations
 can be combined computationally to study anticancer drug responses. The
