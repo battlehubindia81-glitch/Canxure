@@ -245,7 +245,7 @@ export default function App() {
 
       <section className="panel" aria-labelledby="prediction-heading">
         <div className="panel-heading">
-          <p className="section-label">REAL-DATA PREDICTION</p>
+          <p className="section-label"></p>
           <h2 id="prediction-heading">
             {mode === "single"
               ? "Single Cell-Line / Drug Simulation"
