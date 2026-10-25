@@ -1,4 +1,4 @@
-# CANXURE AI --- Precision Oncology Virtual Tumor Research Framework
+# CANXURE AI -   Precision Oncology Virtual Tumor Research Framework
 
 > **Research use only.** CANXURE is an experimental computational
 > research framework. Its outputs are hypotheses for investigation, not
